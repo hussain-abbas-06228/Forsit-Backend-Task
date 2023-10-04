@@ -1,0 +1,123 @@
+-- You can either create tables using queries or the models.py file
+
+CREATE DATABASE e_commerce_db;
+
+
+USE e_commerce_db;
+
+-- Creating Category Table
+CREATE TABLE Category (
+    category_id INT AUTO_INCREMENT PRIMARY KEY,
+    category_name VARCHAR(100) NOT NULL UNIQUE
+);
+
+-- Creating Vendor Table
+CREATE TABLE Vendor (
+    vendor_id INT AUTO_INCREMENT PRIMARY KEY,
+    vendor_name VARCHAR(255) NOT NULL UNIQUE
+);
+
+-- Creating Products Table
+CREATE TABLE Products (
+    product_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    category_id INT,
+    vendor_id INT,
+    price DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (category_id) REFERENCES Category(category_id),
+    FOREIGN KEY (vendor_id) REFERENCES Vendor(vendor_id)
+);
+
+-- Creating User Table (could be a salesperson, customer, etc.)
+CREATE TABLE Users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_name VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE
+);
+
+-- Creating Sales Table
+CREATE TABLE Sales (
+    sale_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    user_id INT,
+    quantity_sold INT NOT NULL,
+    sale_date DATE NOT NULL,
+    revenue DECIMAL(15, 2) NOT NULL,
+    FOREIGN KEY (product_id) REFERENCES Products(product_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+-- Creating Inventory Table
+CREATE TABLE Inventory (
+    inventory_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    current_stock INT NOT NULL,
+    last_updated DATE NOT NULL,
+    FOREIGN KEY (product_id) REFERENCES Products(product_id)
+);
+
+-- Adding Indexes for optimized performance
+CREATE INDEX idx_category ON Products(category_id);
+CREATE INDEX idx_vendor ON Products(vendor_id);
+CREATE INDEX idx_user ON Sales(user_id);
+CREATE INDEX idx_product_sales ON Sales(product_id);
+CREATE INDEX idx_product_inventory ON Inventory(product_id);
+
+-- Populating Tables
+-- Categories
+INSERT INTO Category (category_name) VALUES 
+('Electronics'), 
+('Furniture');
+
+-- Vendors
+INSERT INTO Vendor (vendor_name) VALUES 
+('Amazon'), 
+('Walmart');
+
+-- Products
+INSERT INTO Products (name, category_id, vendor_id, price) VALUES 
+('Amazon Echo', 1, 1, 99.99),
+('Kindle Paperwhite', 1, 1, 129.99),
+('Walmart Chair', 2, 2, 49.99),
+('Walmart Desk', 2, 2, 89.99);
+
+-- Users
+INSERT INTO Users (user_name, email) VALUES 
+('Alice', 'alice@email.com'), 
+('Bob', 'bob@email.com');
+
+-- Sales
+INSERT INTO Sales (product_id, user_id, quantity_sold, sale_date, revenue) VALUES 
+(1, 1, 50, '2023-09-28', 4999.50),
+(2, 2, 40, '2023-09-28', 5199.60),
+(1, 2, 30, '2023-09-27', 2999.70),
+(3, 1, 20, '2023-09-27', 999.80),
+(4, 2, 15, '2023-09-26', 1349.85);
+
+INSERT INTO Sales (product_id, user_id, quantity_sold, sale_date, revenue) VALUES 
+(1, 1, 10, '2023-08-15', 999.90),
+(2, 2, 20, '2023-08-16', 2599.80),
+(3, 1, 15, '2023-08-20', 749.85),
+(4, 2, 5, '2023-09-05', 449.95),
+(1, 1, 60, '2023-10-01', 5999.40),
+(2, 2, 50, '2023-10-02', 6499.50),
+(3, 1, 30, '2023-10-03', 1499.70),
+(4, 2, 25, '2023-10-04', 2249.75);
+
+-- Inventory
+INSERT INTO Inventory (product_id, current_stock, last_updated) VALUES 
+(1, 420, '2023-09-28'),
+(2, 460, '2023-09-28'),
+(3, 480, '2023-09-27'),
+(4, 485, '2023-09-26');
+
+
+select * from inventory;
+
+select * from inventory_changes;
+
+select * from category;
+
+select * from sales;
+
+select * from products;
